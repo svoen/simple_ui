@@ -15,3 +15,6 @@ User interface for a raspberry pi based geodata-collector. The user interfache p
   
 The collected data will be stored in a local postgreSQL database. A manual configuration of the database and tables is needed in beforehand. Furthermore the creation of a storage folder for the video and audio is mendatory to fit the scripts.
 
+Also there are 3 .stl files for a 3d printed collector case which serve as a showcase and hence makes the collector a portable unit for the field.
+
+
