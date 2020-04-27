@@ -1,3 +1,5 @@
+""" Thanks to Ole Jakob Skjelten for providing his AnimatedGIF software (https://github.com/olesk75/AnimatedGIF) """
+
 import requests, json
 import tkinter as tk
 from tkinter import ttk
