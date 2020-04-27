@@ -21,7 +21,7 @@ import wave
 import db
 
 
-#Globale Kammeravariablen
+
 IM_WIDTH = 1024 #3264#1024  #Use smaller resolution for
 IM_HEIGHT = 768 #2448#768
 video = cv2.VideoCapture(0)#manchmal auch 0 evtl try catch einbauen
@@ -30,15 +30,9 @@ ret = video.set(4, IM_HEIGHT)
 ret = video.set(6,1196444237)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-#Globale GPS_Variablen
-port = "/dev/ttyACM0" #ttyAMA0"#ttyACM0
 
+port = "/dev/ttyACM0" 
 
-#bashcomand = 'nohup  /home/pi/Desktop/Tkinter_BA/starter.sh & '
-#process = subprocess.Popen(bashcomand.split(),stdout=subprocess.PIPE, shell=False)
-
-
-# GUI laden und Darstellen
 class Processing_window():
 
     def __init__(self, master, liste, repeat_time, dauer, standort, zeit_einheit):
@@ -46,20 +40,19 @@ class Processing_window():
         self.frame = tk.Frame(master)
         self.frame.pack()
 
-        # Objektvariablen
+        
         self.var_list = liste
         self.repeat_time = repeat_time.get()
         self.standort = standort.get()
         self.dauer = dauer.get()
         self.zeit_einheit = zeit_einheit.get()
         
-        #prozessvariablen
+        
         self.gestartete_prozesse=[]
         self.gps = defaultdict(list)
         self.mean_gps = {}
         
         
-        # Rahmenelemente
         self.button_frame = tk.Frame(master=self.frame)
         self.button_frame.pack()
         self.text_frame = tk.Frame(master=self.frame)
@@ -67,7 +60,7 @@ class Processing_window():
         self.GIF_frame = tk.Frame(master=self.frame)
         self.GIF_frame.pack()
 
-        # button, texte, gif
+        
         self.stateButton = tk.Button(master=self.button_frame, text='Start',command=self.sensorselector).pack(fill ='x')
         self.stopButton = tk.Button(master=self.button_frame, text='Back!',command=self.close_app).pack(fill ='x')
 
@@ -100,7 +93,7 @@ class Processing_window():
         bashcommand = 'nohup  /home/pi/Desktop/Tkinter_BA/starter.sh & '
         process = subprocess.Popen(bashcommand.split(),stdout=subprocess.PIPE, shell=False)
    
-    # Sensorfunktionen
+    
     def GNSS(self):
         #self.text_log_feld.insert('end','GNSS is Running 1 !!!\n')
         print('GNSS: hat die ProzessID ')
@@ -150,7 +143,7 @@ class Processing_window():
                         self.mean_gps = {"lat": round(np.mean(self.gps["lat"]),6), "lon": round(np.mean(self.gps["lon"]),6), "altitude": round(np.mean(self.gps["altitude"]),1),
                                "satellites": round(np.mean(self.gps["satellites"]),1)}
                         print(self.gps)
-#_______________________________________________save here ______________________________________________________________________________
+
                         sql = '''INSERT INTO public.gps (lat, lon, altitude, satellite) VALUES (%s, %s, %s, %s);'''
 
                         vals = [self.mean_gps['lat'],
@@ -159,7 +152,7 @@ class Processing_window():
                                 self.mean_gps['satellites']]
                         db.execute((sql, vals))
                         print('in db geschreieben')
-#_______________________________________________________________________________________________________________________________________                                  
+                               
                         self.text_log_feld.insert('end','Average measurements saved to database! \n')
                         print(os.getpid())                       
                         return True
@@ -197,7 +190,7 @@ class Processing_window():
                                 "altitude": flight['altitude'], "vert_rate": flight["vert_rate"]
                                 }#"timestamp": server_time['timestamp']
                         print(info)
-#_______________________________________________save here ______________________________________________________________________________
+
                         sql = '''INSERT INTO public.flightdata (hex, squawk, flight, speed, lat, lon, track, validposition, validtrack, messages, seen, altitude, vert_rate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
 
                         vals = [info['hex'],
@@ -216,7 +209,7 @@ class Processing_window():
                                 ]#info['timestamp']
                         db.execute((sql, vals))
                         print('in db geschreieben')                        
-#_______________________________________________________________________________________________________________________________________                                                        
+                                                        
                 if len(data) == 0:
                     print('No data receved')               
         print('SDR Done')
@@ -241,7 +234,7 @@ class Processing_window():
                 ret, frame = video.read()
                 cv2.putText(frame,"FPS: {0:.2f} {0:.2f}".format(fps, freq),(30,50),font,1,(255,255,0),2,cv2.LINE_AA)
                 #cv2.imshow("frame", frame)
-#------------------------------------------------------------------------------------------------------------Savefunction in here---------------------------------------------               
+
                 
                 if datetime.now().strftime("%H:%M:%S") == save_intervall.strftime("%H:%M:%S"):                   
                     print('Save')
@@ -250,7 +243,7 @@ class Processing_window():
                     print(count)
                     if self.zeit_einheit == 'min': save_intervall = datetime.now()+timedelta(minutes=int(self.repeat_time))
                     if self.zeit_einheit == 'sec': save_intervall = datetime.now()+timedelta(seconds=int(self.repeat_time))
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
                 key = cv2.waitKey(1)
                 if key == 27:
                     break
@@ -332,7 +325,7 @@ class Processing_window():
         wavefile.writeframes(b''.join(frames))
         wavefile.close()
 
-# Ausgewählte sensoren starten
+
     def sensorselector(self):
    
         for i in self.var_list:
@@ -376,8 +369,7 @@ class Processing_window():
             
             
     def close_app(self):
-        #self.pool.terminate()
-
+       
         for i in self.gestartete_prozesse:
             if i == 'GPS':
                 self.p1.terminate()
